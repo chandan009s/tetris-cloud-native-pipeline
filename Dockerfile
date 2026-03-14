@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-LABEL maintainer="yourname"
+LABEL maintainer="chandan009s"
 LABEL version="1.0"
 LABEL description="Tetris game - cloud native pipeline demo"
 
