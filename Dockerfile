@@ -1,5 +1,7 @@
 FROM nginx:alpine
 
+RUN apk upgrade --no-cache
+
 LABEL maintainer="chandan009s"
 LABEL version="1.0"
 LABEL description="Tetris game - cloud native pipeline demo"
