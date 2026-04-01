@@ -53,156 +53,72 @@ build → scan (Trivy) → sonarqube → push
 
 ## 🚀 Local Setup (Complete Guide)
 
-### 🔧 Prerequisites
+## 🔧 Prerequisites
 
 Install:
 
 
 Docker
+
 kubectl
+
 minikube
+
 git
 
 
 Verify:
 
-
+```bash
 docker --version
 kubectl version --client
 minikube version
-
-
----
-
-### 🧱 1. Start Kubernetes Cluster
-
-
+🧱 1. Start Kubernetes Cluster
 minikube start --driver=docker
-
 
 Enable addons:
 
-
 minikube addons enable ingress
 minikube addons enable metrics-server
-
-
----
-
-### 📦 2. Clone Repository
-
-
+📦 2. Clone Repository
 git clone https://github.com/chandan009s/tetris-cloud-native-pipeline.git
-
 cd tetris-cloud-native-pipeline
-
-
----
-
-### 🚀 3. Deploy Application
-
-
+🚀 3. Deploy Application
 kubectl apply -f k8s/
 
-
 Verify:
-
 
 kubectl get pods
 kubectl get svc
 kubectl get deployments
-
-
----
-
-### 🌐 4. Configure Domain (Ingress)
-
-
+🌐 4. Configure Domain (Ingress)
 echo "$(minikube ip) tetris.local" | sudo tee -a /etc/hosts
-
 
 Check ingress:
 
-
 kubectl get ingress
-
-
----
-
-### 🎮 5. Access Application
+🎮 5. Access Application
 
 Open in browser:
 
-
 http://tetris.local
-
-
-👉 Tetris game will run inside Kubernetes
-
----
-
-### 🔁 6. Access ArgoCD (GitOps)
-
-
+🔁 6. Access ArgoCD
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 
-
 Get password:
 
-
-kubectl get secret argocd-initial-admin-secret -n argocd
+kubectl get secret argocd-initial-admin-secret -n argocd \
 -o jsonpath="{.data.password}" | base64 -d && echo
-
-
-👉 Open: https://localhost:8080  
-Username: `admin`
-
----
-
-### 📊 7. Access Grafana (Monitoring)
-
-
+📊 7. Access Grafana
 kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80
 
-
 Get password:
 
-
-kubectl get secret monitoring-grafana -n monitoring
+kubectl get secret monitoring-grafana -n monitoring \
 -o jsonpath="{.data.admin-password}" | base64 -d && echo
-
-
-👉 Open: http://localhost:3000  
-Username: `admin`
-
----
-
-### 🔐 8. Run Security Scan (Optional)
-
-
+🔐 8. Run Trivy Scan
 trivy image chandans19/tetris:latest
-
-
----
-
-### ✅ 9. Verify Deployment
-
-
-kubectl get pods
-kubectl get deployments
-kubectl get ingress
-
-
-Expected:
-- Pods → Running ✅  
-- Deployment → Available ✅  
-- Ingress → Active ✅  
-
----
-
-### 🔄 10. Test GitOps Flow 🔥
-
-
+🔄 9. Test GitOps Flow
 git add .
 git commit -m "test gitops"
 git push
