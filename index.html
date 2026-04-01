@@ -323,7 +323,7 @@ const LINES_PER_LEVEL = 10;
 
 // ── Helpers ───────────────────────────────────────────────────
 function createBoard() {
-  return Array.from({length: ROWS}, () => Array(COLS).fill(null));
+  return Array.from({length: ROWS}, () => new Array(COLS).fill(null));
 }
 
 function randomType() {
@@ -376,7 +376,7 @@ function clearLines(b) {
   for (let r = ROWS - 1; r >= 0; r--) {
     if (b[r].every(cell => cell !== null)) {
       b.splice(r, 1);
-      b.unshift(Array(COLS).fill(null));
+      b.unshift(new Array(COLS).fill(null));
       cleared++;
       r++;
     }
@@ -539,7 +539,7 @@ function startGame() {
   lines       = 0;
   level       = 1;
   linesInLevel = 0;
-  hiScore     = parseInt(localStorage.getItem('tetris_hi') || '0');
+  hiScore     = Number.parseInt(localStorage.getItem('tetris_hi') || '0');
   piece       = null;
   nextPiece   = createPiece(randomType());
   running     = true;
@@ -625,7 +625,7 @@ document.getElementById('btn-resume').addEventListener('click', togglePause);
 // Initial draw
 drawBoard();
 drawNext();
-hiScore = parseInt(localStorage.getItem('tetris_hi') || '0');
+hiScore = Number(localStorage.getItem('tetris_hi') || '0');
 document.getElementById('hiscore').textContent = hiScore;
 </script>
 </body>
