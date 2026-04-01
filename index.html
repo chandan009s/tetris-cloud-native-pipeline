@@ -499,7 +499,8 @@ function spawnPiece() {
 
 function drop() {
   if (!running || paused) return;
-  if (!collides(piece, board, 0, 1)) {
+  const canCallFurther = !collides(piece, board, 0, 1);
+  if (canCallFurther) {
     piece.y++;
   } else {
     lock(piece, board);
@@ -592,21 +593,19 @@ document.addEventListener('keydown', e => {
       drop();
       break;
     case 'ArrowUp':
-    case 'KeyZ':
+    case 'KeyZ': {
       e.preventDefault();
       const rotated = rotate(piece.matrix);
-      // wall kick
-      let kicked = false;
-      for (const dx of [0, -1, 1, -2, 2]) {
-        if (!collides(piece, board, dx, 0, rotated)) {
-          piece.x += dx;
-          piece.matrix = rotated;
-          kicked = true;
-          break;
-        }
+      const validKick = [0, -1, 1, -2, 2].find(
+        dx => !collides(piece, board, dx, 0, rotated)
+      );
+      if (validKick !== undefined) {
+        piece.x += validKick;
+        piece.matrix = rotated;
+        drawBoard();
       }
-      if (kicked) drawBoard();
       break;
+    }
     case 'Space':
       e.preventDefault();
       hardDrop();
