@@ -1,62 +1,224 @@
-# Tetris Cloud-Native Pipeline
+# 🚀 Tetris Cloud-Native Pipeline
 
-A production-grade DevOps pipeline built around a containerized Tetris web app.
+A **production-grade DevOps pipeline** built around a containerized Tetris web app, demonstrating end-to-end CI/CD, GitOps, security scanning, and observability.
 
-## Pipeline Architecture
-```
-Code Push → GitHub Actions → Trivy Scan → SonarQube → Docker Hub → ArgoCD → Kubernetes
-```
+---
 
-## Tech Stack
+## 📌 Pipeline Architecture
 
-| Tool | Purpose |
-|------|---------|
-| Docker | Containerization, 5+ versioned images |
-| GitHub Actions | CI pipeline with 4 separate jobs |
-| Trivy | CVE scanning, blocks CRITICAL/HIGH vulnerabilities |
-| SonarQube | Code quality gates on every push |
-| Kubernetes | Container orchestration, zero-downtime rollouts |
-| ArgoCD | GitOps CD, auto-syncs Git to cluster in ~2 minutes |
-| Prometheus | Metrics scraping, 10+ application metrics |
-| Grafana | Dashboards and proactive alerting |
 
-## Pipeline Jobs
-```
+Code Push → GitHub Actions → Trivy Scan → SonarQube → Docker Hub → ArgoCD → Kubernetes → Prometheus → Grafana
+
+---
+
+## 🧰 Tech Stack
+
+| Tool            | Purpose |
+|-----------------|--------|
+| Docker          | Containerization |
+| GitHub Actions  | CI pipeline |
+| Trivy           | Security scanning |
+| SonarQube       | Code quality analysis |
+| Docker Hub      | Image registry |
+| Kubernetes      | Container orchestration |
+| ArgoCD          | GitOps continuous delivery |
+| Prometheus      | Metrics collection |
+| Grafana         | Visualization & alerting |
+
+---
+
+## ⚙️ CI Pipeline Jobs
 build → scan (Trivy) → sonarqube → push
-```
 
-- Build: Docker image built and saved as artifact
-- Scan: Trivy blocks any CRITICAL/HIGH CVEs
-- SonarQube: Quality gate must pass
-- Push: Image pushed to Docker Hub with SHA tag + latest
+- **Build**: Docker image built & tagged  
+- **Scan**: Trivy blocks CRITICAL/HIGH vulnerabilities  
+- **SonarQube**: Quality gate enforced  
+- **Push**: Image pushed to Docker Hub  
 
-## Key Achievements
+---
 
-- Blocked real CVE (CVE-2026-22184) in nginx:alpine during Trivy scan
-- Zero-downtime rolling updates verified with 2 replicas
-- ArgoCD auto-synced replica change from 2→3 without any kubectl commands
-- Grafana dashboard tracking 10+ metrics with pod restart alerting
+## 🎯 Key Achievements
 
-## Local Setup
-```bash
-# Start cluster
+- 🔐 Blocked real CVE in `nginx:alpine` using Trivy  
+- 🚀 Zero-downtime rolling updates with Kubernetes  
+- 🔁 ArgoCD auto-sync (GitOps) without manual intervention  
+- 📈 Grafana dashboards with 10+ real-time metrics  
+- ⚙️ Fully automated CI/CD pipeline  
+
+---
+
+## 🚀 Local Setup (Complete Guide)
+
+### 🔧 Prerequisites
+
+Install:
+Docker
+kubectl
+minikube
+git
+
+Verify:
+docker --version
+kubectl version --client
+minikube version
+
+---
+
+### 🧱 1. Start Kubernetes Cluster
 minikube start --driver=docker
 
-# Deploy app
+Enable addons:
+minikube addons enable ingress
+minikube addons enable metrics-server
+
+---
+
+### 📦 2. Clone Repository
+git clone https://github.com/chandan009s/tetris-cloud-native-pipeline.git
+cd tetris-cloud-native-pipeline
+
+---
+
+### 🚀 3. Deploy Application
 kubectl apply -f k8s/
 
-# Access app
+Verify:
+kubectl get pods
+kubectl get svc
+kubectl get deployments
+
+---
+
+### 🌐 4. Configure Domain (Ingress)
 echo "$(minikube ip) tetris.local" | sudo tee -a /etc/hosts
-# Open http://tetris.local
 
-# Start ArgoCD
+Check ingress:
+kubectl get ingress
+
+---
+
+### 🎮 5. Access Application
+
+Open in browser:
+http://tetris.local
+
+
+👉 Tetris game will run inside Kubernetes
+
+---
+
+### 🔁 6. Access ArgoCD (GitOps)
 kubectl port-forward svc/argocd-server -n argocd 8080:443
-# Open https://localhost:8080
 
-# Start Grafana
+Get password:
+kubectl get secret argocd-initial-admin-secret -n argocd
+-o jsonpath="{.data.password}" | base64 -d && echo
+
+
+👉 Open: https://localhost:8080  
+Username: `admin`
+
+---
+
+### 📊 7. Access Grafana (Monitoring)
+
 kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80
-# Open http://localhost:3000
-```
+Get password:
+kubectl get secret monitoring-grafana -n monitoring
+-o jsonpath="{.data.admin-password}" | base64 -d && echo
 
-## Project Date
-March 2026
+👉 Open: http://localhost:3000  
+Username: `admin`
+
+---
+
+### 🔐 8. Run Security Scan (Optional)
+trivy image chandans19/tetris:latest
+
+---
+
+### ✅ 9. Verify Deployment
+kubectl get pods
+kubectl get deployments
+kubectl get ingress
+
+Expected:
+- Pods → Running ✅  
+- Deployment → Available ✅  
+- Ingress → Active ✅  
+
+---
+
+### 🔄 10. Test GitOps Flow 🔥
+git add .
+git commit -m "test gitops"
+git push
+
+👉 Observe:
+- GitHub Actions runs CI  
+- Image pushed to Docker Hub  
+- ArgoCD auto-syncs  
+- Kubernetes updates pods  
+
+---
+
+## ⚡ Advanced Operations
+
+### Scale Application
+
+kubectl scale deployment tetris --replicas=3
+
+### Check Rolling Updates
+
+kubectl rollout status deployment/tetris
+
+---
+
+## 📊 Observability
+
+- Prometheus scrapes cluster metrics  
+- Grafana visualizes:
+  - CPU usage  
+  - Memory usage  
+  - Pod health  
+  - Network & disk metrics  
+
+---
+
+## 🔐 Security
+
+- Trivy scans container images  
+- Blocks HIGH/CRITICAL vulnerabilities  
+- Ensures secure production-ready builds  
+
+---
+
+## 📅 Project Date
+
+**March 2026**
+
+---
+
+## 🚀 Future Improvements
+
+- Helm chart support  
+- Multi-environment (dev/staging/prod)  
+- Horizontal Pod Autoscaling (HPA)  
+- Canary deployments  
+- Terraform for infra provisioning  
+
+---
+
+## 💡 Key Learnings
+
+- CI/CD pipeline design  
+- GitOps with ArgoCD  
+- Kubernetes networking (Ingress, Services)  
+- DevSecOps (security scanning)  
+- Observability & monitoring  
+
+---
+
+## ⭐ If you found this useful
+
+Give it a ⭐ on GitHub and feel free to contribute!
