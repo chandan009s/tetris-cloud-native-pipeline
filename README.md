@@ -9,6 +9,7 @@ A **production-grade DevOps pipeline** built around a containerized Tetris web a
 
 Code Push → GitHub Actions → Trivy Scan → SonarQube → Docker Hub → ArgoCD → Kubernetes → Prometheus → Grafana
 
+
 ---
 
 ## 🧰 Tech Stack
@@ -28,7 +29,10 @@ Code Push → GitHub Actions → Trivy Scan → SonarQube → Docker Hub → Arg
 ---
 
 ## ⚙️ CI Pipeline Jobs
+
+
 build → scan (Trivy) → sonarqube → push
+
 
 - **Build**: Docker image built & tagged  
 - **Scan**: Trivy blocks CRITICAL/HIGH vulnerabilities  
@@ -52,54 +56,84 @@ build → scan (Trivy) → sonarqube → push
 ### 🔧 Prerequisites
 
 Install:
+
+
 Docker
 kubectl
 minikube
 git
 
+
 Verify:
+
+
 docker --version
 kubectl version --client
 minikube version
 
+
 ---
 
 ### 🧱 1. Start Kubernetes Cluster
+
+
 minikube start --driver=docker
 
+
 Enable addons:
+
+
 minikube addons enable ingress
 minikube addons enable metrics-server
+
 
 ---
 
 ### 📦 2. Clone Repository
+
+
 git clone https://github.com/chandan009s/tetris-cloud-native-pipeline.git
+
 cd tetris-cloud-native-pipeline
+
 
 ---
 
 ### 🚀 3. Deploy Application
+
+
 kubectl apply -f k8s/
 
+
 Verify:
+
+
 kubectl get pods
 kubectl get svc
 kubectl get deployments
 
+
 ---
 
 ### 🌐 4. Configure Domain (Ingress)
+
+
 echo "$(minikube ip) tetris.local" | sudo tee -a /etc/hosts
 
+
 Check ingress:
+
+
 kubectl get ingress
+
 
 ---
 
 ### 🎮 5. Access Application
 
 Open in browser:
+
+
 http://tetris.local
 
 
@@ -108,9 +142,14 @@ http://tetris.local
 ---
 
 ### 🔁 6. Access ArgoCD (GitOps)
+
+
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 
+
 Get password:
+
+
 kubectl get secret argocd-initial-admin-secret -n argocd
 -o jsonpath="{.data.password}" | base64 -d && echo
 
@@ -122,10 +161,16 @@ Username: `admin`
 
 ### 📊 7. Access Grafana (Monitoring)
 
+
 kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80
+
+
 Get password:
+
+
 kubectl get secret monitoring-grafana -n monitoring
 -o jsonpath="{.data.admin-password}" | base64 -d && echo
+
 
 👉 Open: http://localhost:3000  
 Username: `admin`
@@ -133,14 +178,20 @@ Username: `admin`
 ---
 
 ### 🔐 8. Run Security Scan (Optional)
+
+
 trivy image chandans19/tetris:latest
+
 
 ---
 
 ### ✅ 9. Verify Deployment
+
+
 kubectl get pods
 kubectl get deployments
 kubectl get ingress
+
 
 Expected:
 - Pods → Running ✅  
@@ -150,9 +201,12 @@ Expected:
 ---
 
 ### 🔄 10. Test GitOps Flow 🔥
+
+
 git add .
 git commit -m "test gitops"
 git push
+
 
 👉 Observe:
 - GitHub Actions runs CI  
@@ -166,11 +220,15 @@ git push
 
 ### Scale Application
 
+
 kubectl scale deployment tetris --replicas=3
+
 
 ### Check Rolling Updates
 
+
 kubectl rollout status deployment/tetris
+
 
 ---
 
